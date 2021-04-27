@@ -25,6 +25,18 @@ public class MainProgram {
 			case 2:
 				produtoController.consultarProdutos(produtos);
 				break;
+			case 3:
+				produtoController.editarProduto(produtos);
+				break;
+			case 4:
+				produtoController.removerProduto(produtos);
+				break;
+			case 5:
+				produtoController.adicionar(produtos);
+				break;
+			case 6:
+				produtoController.mostrar(produtos);
+				break;
 			case 9:
 				sair = true;
 				break;

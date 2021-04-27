@@ -3,7 +3,7 @@ package br.com.senai.model;
 public class ProdutoModel {
 
 	// Atributos
-	private String nomdeDoProduto;
+	private String nomeDoProduto;
 	private double precoDoProduto;
 	private int quantidadeDeProduto;
 	private double saldoEmEstoque;
@@ -13,19 +13,19 @@ public class ProdutoModel {
 
 	public ProdutoModel(String nomdeDoProduto, double precoDoProduto, int quantidadeDeProduto, double saldoEmEstoque) {
 		super();
-		this.nomdeDoProduto = nomdeDoProduto;
+		this.nomeDoProduto = nomdeDoProduto;
 		this.precoDoProduto = precoDoProduto;
 		this.quantidadeDeProduto = quantidadeDeProduto;
 		this.saldoEmEstoque = saldoEmEstoque;
 	}
 
 	// METODOS ACE/MOD
-	public String getNomdeDoProduto() {
-		return nomdeDoProduto;
+	public String getNomeDoProduto() {
+		return nomeDoProduto;
 	}
 
-	public void setNomdeDoProduto(String nomdeDoProduto) {
-		this.nomdeDoProduto = nomdeDoProduto;
+	public void setNomeDoProduto(String nomeDoProduto) {
+		this.nomeDoProduto = nomeDoProduto;
 	}
 
 	public double getPrecoDoProduto() {
@@ -51,12 +51,5 @@ public class ProdutoModel {
 	public void setSaldoEmEstoque(double saldoEmEstoque) {
 		this.saldoEmEstoque = saldoEmEstoque;
 	}
-
-	@Override
-	public String toString() {
-		return "Nome do produto: " + nomdeDoProduto + "\nPreço do Produto: " + precoDoProduto
-				+ "\nQuantidade De Produto: " + quantidadeDeProduto + "\nSaldo Em Estoque: " + saldoEmEstoque;
-	}
-	
 	
 }
