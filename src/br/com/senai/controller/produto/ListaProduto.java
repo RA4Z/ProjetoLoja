@@ -1,28 +1,38 @@
 package br.com.senai.controller.produto;
 
-import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
-import br.com.senai.model.ProdutoModel;
+import br.com.dao.DataBaseConnection;
 
 public class ListaProduto {
 
-	public List<ProdutoModel> listarProdutos(List<ProdutoModel> produtos) {
-		System.out.println("\n----------- PRODUTOS CADASTRADOS -----------\n");
-		System.out.printf("| %2s | %10s | %8s | %4s | %9s |\n", "ID", "Produto", "Preço", "Qtd", "R$ Total");
-		
-//		Produtos.forEach(item -> {
-//			System.out.printf("| %2s | %10s | R$%6.2f | %4s | R$%7.2f |\n",
-//					item.getIdDoProduto(),
-//					item.getProdutoModel().getNomeDoProduto(),
-//					item.getProdutoModel().getPrecoDoProduto(),
-//					item.getQuantidadeDeItensNoCarrinho(),
-//					item.getValorTotalPorItem()
-//					);
-//		});
-				
-		for(int i = 0; i < produtos.size(); i++) {
-			System.out.printf("| %2s | %10s | %8s | %4s | %9s |\n",i+1 ,produtos.get(i).getNomeDoProduto(),produtos.get(i).getPrecoDoProduto(), produtos.get(i).getQuantidadeDeProduto(), produtos.get(i).getSaldoEmEstoque() );
-		};
-		return produtos;
+	private Connection connection;
+
+	public ListaProduto() {
+		connection = DataBaseConnection.getInstance().getConnection();
+	}
+
+	public ResultSet listarProdutos() {
+
+		PreparedStatement preparedStatement;
+		try {
+			String sql = "select * from produto";
+			preparedStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+
+			System.out.println("\n----------- PRODUTOS CADASTRADOS -----------\n");
+			System.out.printf("| %2s | %15s | %8s | %4s | %9s |\n", "ID", "Produto", "Preço", "Qtd", "R$ Total");
+
+			while (resultSet.next()) {
+				System.out.printf("| %2s | %15s | %8s | %4s | %9s |\n", resultSet.getInt("codigoDoProduto"),
+						resultSet.getString("nomeDoProduto"), resultSet.getDouble("precoDoProduto"),
+						resultSet.getInt("quantidadeDoProduto"), resultSet.getDouble("saldoEmEstoque"));
+			}
+			return resultSet;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 }
