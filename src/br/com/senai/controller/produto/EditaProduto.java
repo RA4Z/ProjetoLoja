@@ -18,7 +18,7 @@ public class EditaProduto {
 			return null;
 		}
 		
-		listaProduto.listarProdutos(produtos);
+		listaProduto.listarProdutos();
 		
 		System.out.println("--- EDITAR DADOS DE PRODUTO ---");
 		System.out.print("Informe o Id do produto: ");

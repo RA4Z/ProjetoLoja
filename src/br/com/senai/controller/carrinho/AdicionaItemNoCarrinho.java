@@ -18,10 +18,10 @@ public class AdicionaItemNoCarrinho {
 			return null;
 		}
 
-		listaProduto.listarProdutos(produtos);
+		listaProduto.listarProdutos();
 		System.out.println("--- ADICIONAR ITEM NO CARRINHO ---");
 		System.out.print("Informe o ID do produto: ");
-		carrinhoModel.setIdDoProduto(entrada.nextInt() - 1);
+		carrinhoModel.setIdDoProduto(entrada.nextInt() -1);
 		int idDoProduto = carrinhoModel.getIdDoProduto();
 
 		if (carrinhoModel.getIdDoProduto() > produtos.size()) {

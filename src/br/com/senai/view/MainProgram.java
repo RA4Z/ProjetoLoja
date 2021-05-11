@@ -40,7 +40,7 @@ public class MainProgram {
 				produtos.add(cadastraProduto.cadastrarProduto());
 				break;
 			case 2:
-				listaProduto.listarProdutos(produtos);
+				listaProduto.listarProdutos();
 				break;
 			case 3:
 				editaProduto.editarProduto(produtos);
