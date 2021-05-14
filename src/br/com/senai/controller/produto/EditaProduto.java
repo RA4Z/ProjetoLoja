@@ -1,99 +1,169 @@
 package br.com.senai.controller.produto;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.Scanner;
-
+import br.com.dao.DataBaseConnection;
 import br.com.senai.model.ProdutoModel;
 
 public class EditaProduto {
 
-	ListaProduto listaProduto = new ListaProduto();
-	Scanner entrada = new Scanner(System.in);
+	private Scanner entrada = new Scanner(System.in);
+	private ListaProduto listaProduto;
+	private ProdutoModel produto;
+	private Connection connection;
+
+	public EditaProduto() {
+		connection = DataBaseConnection.getInstance().getConnection();
+	}
+
 	public ProdutoModel editarProduto(List<ProdutoModel> produtos) {
-		ProdutoModel produto = new ProdutoModel();
+		PreparedStatement preparedStatement;
+		
+		produto = new ProdutoModel();
+		listaProduto = new ListaProduto();		
+		
 		int idDoProduto, indexDoCampo;
-		
-		if (produtos.size() <= 0) {
-			System.out.println("Não possui produtos para serem editados");
-			return null;
-		}
-		
-		listaProduto.listarProdutos();
-		
-		System.out.println("--- EDITAR DADOS DE PRODUTO ---");
-		System.out.print("Informe o Id do produto: ");
-		idDoProduto =  entrada.nextInt() - 1;
-		if(idDoProduto >= produtos.size()) {
-			System.out.println("Este produto não existe");
+
+		if (listaProduto.listarProdutos() == null) {
 			return null;
 		}
 
+		System.out.println("--- EDITAR DADOS DE PRODUTO ---");
+		System.out.print("Informe o Id do produto: ");
+		idDoProduto = entrada.nextInt();
+		
+		try {
+			String sql = "SELECT * FROM produto WHERE codigoDoProduto = ?";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, idDoProduto);
+			
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			if(!resultSet.next()) {
+				System.out.println("Esse produto não existe.");
+				return null;
+			} else {
+				produto.setNomeDoProduto(resultSet.getString("nomeDoProduto"));
+				produto.setPrecoDoProduto(resultSet.getDouble("precoDoProduto"));
+				produto.setQuantidadeDeProduto(resultSet.getInt("quantidadeDoProduto"));
+			}
+			resultSet.previous();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
 		System.out.println("--- Campos ---");
 		System.out.println("1) Nome do produto\n2) Preço unitário\n3) Quantidade");
 		System.out.print("Informe o campo que deseja editar: ");
 		indexDoCampo = entrada.nextInt();
-		
-		switch(indexDoCampo) {
+
+		switch (indexDoCampo) {
 		case 1:
-			editarNomeDoProduto(produtos, produto, idDoProduto);
+			editarNomeDoProduto(idDoProduto);
 			break;
 		case 2:
-			editarPrecoDoProduto(produtos, produto, idDoProduto);
+			editarPrecoDoProduto(idDoProduto);
 			break;
 		case 3:
-			editarQuantidadeDoProduto(produtos, produto, idDoProduto);
+			editarQuantidadeDoProduto(idDoProduto);
 			break;
 		default:
 			System.out.println("Opção inválida");
 			break;
-			}
+		}
 		return produto;
 	}
-	private ProdutoModel editarNomeDoProduto(List<ProdutoModel> produtos, ProdutoModel produto, int idDoProduto) {
+
+	private ProdutoModel editarNomeDoProduto(int idDoProduto) {
+		PreparedStatement preparedStatement;
+		
 		System.out.print("Informe o novo nome para o produto: ");
 		produto.setNomeDoProduto(entrada.next());
 		
-		produto.setPrecoDoProduto(produtos.get(idDoProduto).getPrecoDoProduto());
-		produto.setQuantidadeDeProduto(produtos.get(idDoProduto).getQuantidadeDeProduto());
-		produto.setSaldoEmEstoque(produtos.get(idDoProduto).getSaldoEmEstoque());
-		
-		produtos.set(idDoProduto, produto);
+		try {
+			String sql = "UPDATE produto SET nomeDoProduto = ?"
+					   + " WHERE codigoDoProduto = ?";
+			preparedStatement = connection.prepareStatement(sql);
+			
+			preparedStatement.setString(1, produto.getNomeDoProduto());
+			preparedStatement.setInt(2, idDoProduto);
+			
+			preparedStatement.execute();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}	
 		return produto;
 	}
-	private ProdutoModel editarQuantidadeDoProduto(List<ProdutoModel> produtos, ProdutoModel produto, int idDoProduto) {
-		System.out.print("Informe a nova quantidade para o produto: ");
-		produto.setQuantidadeDeProduto(entrada.nextInt());
+
+	private ProdutoModel editarPrecoDoProduto(int idDoProduto) {
+		PreparedStatement preparedStatement;
 		
-		produto.setPrecoDoProduto(produtos.get(idDoProduto).getPrecoDoProduto());
-		produto.setNomeDoProduto(produtos.get(idDoProduto).getNomeDoProduto());
-		produto.setSaldoEmEstoque(produtos.get(idDoProduto).getPrecoDoProduto() * produto.getQuantidadeDeProduto());
-		
-		produtos.set(idDoProduto, produto);
-		return produto;
-	}
-	private ProdutoModel editarPrecoDoProduto(List<ProdutoModel> produtos, ProdutoModel produto, int idDoProduto) {
 		System.out.print("Informe o novo preço para o produto: ");
+		
 		produto.setPrecoDoProduto(entrada.nextDouble());
 		
-		produto.setNomeDoProduto(produtos.get(idDoProduto).getNomeDoProduto());
-		produto.setQuantidadeDeProduto(produtos.get(idDoProduto).getQuantidadeDeProduto());
-		produto.setSaldoEmEstoque(produtos.get(idDoProduto).getQuantidadeDeProduto() * produto.getPrecoDoProduto());
-		
-		produtos.set(idDoProduto, produto);
+		produto.setSaldoEmEstoque(produto.getPrecoDoProduto() * produto.getQuantidadeDeProduto());
+
+		try {
+			String sql = "UPDATE produto SET precoDoProduto = ?, saldoEmEstoque = ? "
+					+ " WHERE codigoDoProduto = ?";
+			preparedStatement = connection.prepareStatement(sql);
+			
+			preparedStatement.setDouble(1, produto.getPrecoDoProduto());
+			preparedStatement.setDouble(2, produto.getSaldoEmEstoque());
+			preparedStatement.setInt(3, idDoProduto);
+			
+			preparedStatement.execute();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}		
 		return produto;
 	}
-	public List<ProdutoModel> atualizarQuantidadeEValorTotal(List<ProdutoModel> produtos, int quantidade, int idDoProduto ) {
+
+	private ProdutoModel editarQuantidadeDoProduto(int idDoProduto) {
+		PreparedStatement preparedStatement;
+		
+		System.out.print("Informe a nova quantidade para o produto: ");
+		produto.setQuantidadeDeProduto(entrada.nextInt());
+
+		produto.setSaldoEmEstoque(produto.getQuantidadeDeProduto() * produto.getPrecoDoProduto());
+		
+		try {
+			String sql = "UPDATE produto SET quantidadeDoProduto = ?, saldoEmEstoque = ? "
+					+ " WHERE codigoDoProduto = ?";
+			preparedStatement = connection.prepareStatement(sql);
+			
+			preparedStatement.setInt(1, produto.getQuantidadeDeProduto());
+			preparedStatement.setDouble(2, produto.getSaldoEmEstoque());
+			preparedStatement.setInt(3, idDoProduto);
+			
+			preparedStatement.execute();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return produto;
+	}
+
+	public List<ProdutoModel> atualizarQuantidadeEValorTotal(List<ProdutoModel> produtos, int quantidade,
+			int idDoProduto) {
 		ProdutoModel produto = new ProdutoModel();
-		produto.setQuantidadeDeProduto(
-				produtos.get(idDoProduto).getQuantidadeDeProduto() - quantidade
-				);
-		produto.setSaldoEmEstoque(
-				produtos.get(idDoProduto).getPrecoDoProduto() * produto.getQuantidadeDeProduto()
-				);
+		produto.setQuantidadeDeProduto(produtos.get(idDoProduto).getQuantidadeDeProduto() - quantidade);
+		produto.setSaldoEmEstoque(produtos.get(idDoProduto).getPrecoDoProduto() * produto.getQuantidadeDeProduto());
 		produto.setNomeDoProduto(produtos.get(idDoProduto).getNomeDoProduto());
 		produto.setPrecoDoProduto(produtos.get(idDoProduto).getPrecoDoProduto());
 		produtos.set(idDoProduto, produto);
-		
+
 		return produtos;
 	}
 }
