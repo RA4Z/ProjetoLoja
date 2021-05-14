@@ -18,13 +18,21 @@ public class ListaProduto {
 
 		PreparedStatement preparedStatement;
 		try {
-			String sql = "select * from produto";
+			String sql = "select * from produto order by codigoDoProduto";
 			preparedStatement = connection.prepareStatement(sql);
 			ResultSet resultSet = preparedStatement.executeQuery();
-
+			
+			if(!resultSet.next()) {
+				System.out.println("Não possui dados cadastrados.");
+				return null;
+			}
+			
 			System.out.println("\n----------- PRODUTOS CADASTRADOS -----------\n");
 			System.out.printf("| %2s | %15s | %8s | %4s | %9s |\n", "ID", "Produto", "Preço", "Qtd", "R$ Total");
 
+			
+			resultSet.previous();
+			
 			while (resultSet.next()) {
 				System.out.printf("| %2s | %15s | %8s | %4s | %9s |\n", resultSet.getInt("codigoDoProduto"),
 						resultSet.getString("nomeDoProduto"), resultSet.getDouble("precoDoProduto"),
