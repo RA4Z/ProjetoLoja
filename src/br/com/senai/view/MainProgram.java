@@ -43,13 +43,13 @@ public class MainProgram {
 				listaProduto.listarProdutos();
 				break;
 			case 3:
-				editaProduto.editarProduto(produtos);
+				editaProduto.editarProduto();
 				break;
 			case 4:
-				deletaProduto.removerProduto(produtos);
+				deletaProduto.removerProduto();
 				break;
 			case 5:
-				itensNoCarrinho.add(adicionaItemNoCarrinho.cadastrarItemNoCarrinho(produtos));
+				itensNoCarrinho.add(adicionaItemNoCarrinho.cadastrarItemNoCarrinho());
 				break;
 			case 6:
 				listaCarrinho.listarItensNoCarrinho(itensNoCarrinho);
