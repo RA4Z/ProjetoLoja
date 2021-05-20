@@ -20,6 +20,7 @@ public class AdicionaItemNoCarrinho {
 	@SuppressWarnings("all")
 	public CarrinhoModel cadastrarItemNoCarrinho() {
 		PreparedStatement preparedStatement;
+		String nome = "";
 		double preco = 0;
 		listaProduto = new ListaProduto();	
 		
@@ -61,6 +62,7 @@ public class AdicionaItemNoCarrinho {
 				preco = resultSet.getDouble("precoDoProduto");
 				double tudo = (resultSet.getInt("quantidadeDoProduto") 
 						- carrinhoModel.getQuantidadeDeItensNoCarrinho()) * resultSet.getDouble("precoDoProduto");
+				nome = resultSet.getString("nomeDoProduto");
 				
 				sql = "UPDATE produto SET quantidadeDoProduto = ?, saldoEmEstoque = ? "
 						+ " WHERE codigoDoProduto = ?";
@@ -85,20 +87,23 @@ public class AdicionaItemNoCarrinho {
 			ResultSet resultSet = preparedStatement.executeQuery();
 			preparedStatement.execute();
 			if(!resultSet.next()) {
-				sql = "INSERT INTO carrinho (idDoProduto, quantidadeDoProduto, valorTotal)"
-						+ " VALUES (?, ?, ?)";
+				sql = "INSERT INTO carrinho (idDoProduto, nomeDoProduto, quantidadeDoProduto, valorTotal)"
+						+ " VALUES (?, ?, ?, ?)";
 				preparedStatement = connection.prepareStatement(sql);
 				preparedStatement.setInt(1, idDoProduto);
-				preparedStatement.setInt(2, carrinhoModel.getQuantidadeDeItensNoCarrinho());
-				preparedStatement.setDouble(3, carrinhoModel.getQuantidadeDeItensNoCarrinho() * preco);
+				preparedStatement.setString(2, nome);
+				preparedStatement.setInt(3, carrinhoModel.getQuantidadeDeItensNoCarrinho());
+				preparedStatement.setDouble(4, carrinhoModel.getQuantidadeDeItensNoCarrinho() * preco);
 				preparedStatement.execute();
 				return carrinhoModel;
 			} else {
-				sql = "UPDATE carrinho SET idDoProduto = ?, quantidadeDoProduto = ?, valorTotal = ? ";
+				sql = "UPDATE carrinho SET idDoProduto = ?, nomeDoProduto = ?,"
+						+ " quantidadeDoProduto = ?, valorTotal = ? ";
 				preparedStatement = connection.prepareStatement(sql);
 				preparedStatement.setInt(1, idDoProduto);
-				preparedStatement.setInt(2, resultSet.getInt("quantidadeDoProduto") + carrinhoModel.getQuantidadeDeItensNoCarrinho());
-				preparedStatement.setDouble(3, (resultSet.getInt("quantidadeDoProduto") + carrinhoModel.getQuantidadeDeItensNoCarrinho()) * preco);
+				preparedStatement.setString(2, nome);
+				preparedStatement.setInt(3, resultSet.getInt("quantidadeDoProduto") + carrinhoModel.getQuantidadeDeItensNoCarrinho());
+				preparedStatement.setDouble(4, (resultSet.getInt("quantidadeDoProduto") + carrinhoModel.getQuantidadeDeItensNoCarrinho()) * preco);
 				preparedStatement.execute();
 			}		
 			

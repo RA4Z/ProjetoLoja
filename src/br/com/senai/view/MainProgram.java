@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.senai.controller.Controller;
 import br.com.senai.controller.carrinho.AdicionaItemNoCarrinho;
+import br.com.senai.controller.carrinho.DevolveItemDoCarrinho;
 import br.com.senai.controller.carrinho.ListaCarrinho;
 import br.com.senai.controller.cliente.AdicionaCliente;
 import br.com.senai.controller.produto.CadastraProduto;
@@ -28,6 +29,7 @@ public class MainProgram {
 		EditaProduto editaProduto = new EditaProduto();
 		DeletaProduto deletaProduto = new DeletaProduto();
 		AdicionaCliente adicionaCliente = new AdicionaCliente();
+		DevolveItemDoCarrinho devolveItem = new DevolveItemDoCarrinho();
 		
 		boolean sair = false;
 		String cliente = adicionaCliente.definirCliente();
@@ -52,10 +54,13 @@ public class MainProgram {
 				itensNoCarrinho.add(adicionaItemNoCarrinho.cadastrarItemNoCarrinho());
 				break;
 			case 6:
-				listaCarrinho.listarItensNoCarrinho(itensNoCarrinho);
+				listaCarrinho.listarItensNoCarrinho();
 				break;
 			case 7:
-				listaCarrinho.gerarCupom(itensNoCarrinho, cliente);
+				listaCarrinho.gerarCupom(cliente);
+				break;
+			case 8:
+				devolveItem.devolverItemDoCarrinho();
 				break;
 			case 9:
 				sair = true;
