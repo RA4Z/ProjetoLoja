@@ -20,13 +20,13 @@ public class DevolveItemDoCarrinho {
 		CarrinhoModel carrinhoModel = new CarrinhoModel();
 		PreparedStatement preparedStatement;
 		ListaCarrinho listaCarrinho = new ListaCarrinho();
-		int quantidade = 0;
+		int quantidade = 0, id = 0;
 		try {
 			if (listaCarrinho.listarItensNoCarrinho() == null) {
 				return null;
 			}
 			System.out.println("Qual o ID do item a ser devolvido? ");
-			int id = entrada.nextInt();
+			id = entrada.nextInt();
 			
 			String sql = "SELECT * FROM carrinho WHERE idDoProduto = ?";
 			preparedStatement = connection.prepareStatement(sql);
@@ -45,23 +45,52 @@ public class DevolveItemDoCarrinho {
 					return null;
 				}
 			}
+			resultSet.previous();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		try {
 			
-			sql = "SELECT * FROM produto WHERE codigoDoProduto = ?";
+			String sql = "SELECT * FROM produto WHERE codigoDoProduto = ?";
 			preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setInt(1, id);
-			resultSet = preparedStatement.executeQuery();
-			double preco = resultSet.getDouble("precoDoProduto");
+			preparedStatement.setInt(1, id);		
+			ResultSet resultSet = preparedStatement.executeQuery();
+			resultSet.next();
+			double preco = resultSet.getDouble("precoDoProduto");		
 			
-			sql = "UPDATE carrinho SET quantidadeDoProduto = ?, saldoEmEstoque = ? "
+			sql = "SELECT * FROM carrinho WHERE idDoProduto = ?";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, id);		
+			resultSet = preparedStatement.executeQuery();
+			resultSet.next();
+			
+			sql = "UPDATE carrinho SET quantidadeDoProduto = ?, valorTotal = ? "
 					+ " WHERE idDoProduto = ?";
 			
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, resultSet.getInt("quantidadeDoProduto") - quantidade);
-			preparedStatement.setDouble(2, (resultSet.getInt("quantidadeDoProduto") - quantidade) * preco);
+			preparedStatement.setDouble(2, (resultSet.getInt("quantidadeDoProduto") - quantidade) * preco );
 			preparedStatement.setInt(3, id);
 			preparedStatement.execute();	
+
+			sql = "SELECT * FROM produto WHERE codigoDoProduto = ?";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, id);	
+			resultSet = preparedStatement.executeQuery();
+			resultSet.next();
+			
+			sql = "UPDATE produto SET quantidadeDoProduto = ?, saldoEmEstoque = ? "
+					+ " WHERE codigoDoProduto = ?";
+			
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, resultSet.getInt("quantidadeDoProduto") + quantidade);
+			preparedStatement.setDouble(2, (resultSet.getInt("quantidadeDoProduto") + quantidade) * preco );
+			preparedStatement.setInt(3, id);
+			preparedStatement.execute();			
 			
 			return carrinhoModel;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

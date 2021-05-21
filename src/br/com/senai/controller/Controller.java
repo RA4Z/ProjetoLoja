@@ -20,6 +20,7 @@ public class Controller {
 
 	public void menu() {
 		System.out.println("\n------ MENU ------");
+		System.out.println("0) Mostrar histórico");
 		System.out.println("1) Cadastrar itens");
 		System.out.println("2) Listar estoque");
 		System.out.println("3) Editar item");

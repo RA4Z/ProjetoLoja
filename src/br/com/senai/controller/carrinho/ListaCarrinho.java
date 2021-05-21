@@ -6,14 +6,13 @@ import java.sql.ResultSet;
 
 import br.com.dao.DataBaseConnection;
 
-public class ListaCarrinho {
+public class ListaCarrinho {	
 
 	private Connection connection;
 	
 	public ListaCarrinho() {
 		connection = DataBaseConnection.getInstance().getConnection();
 	}
-	
 	public ResultSet listarItensNoCarrinho() {
 		PreparedStatement preparedStatement;
 		try {
@@ -43,10 +42,9 @@ public class ListaCarrinho {
 	}
 
 	//=========================================================================================================
-	
+	@SuppressWarnings("all")
 	public ResultSet gerarCupom(String cliente) {
 		PreparedStatement preparedStatement;		
-		
 		try {
 			String sql = "select * from carrinho order by idDoProduto";
 
@@ -58,6 +56,7 @@ public class ListaCarrinho {
 				return null;
 			} 			
 					
+			if(!resultSet.next()) {
 			sql = "insert into historico values (" + 
 					"	(?)," + 
 					"    (select sum(quantidadeDoProduto) as quantidadeTotal from carrinho)," + 
@@ -65,10 +64,19 @@ public class ListaCarrinho {
 					");";
 			
 			preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setString(1, cliente);
+			preparedStatement.setString(1, cliente);		
 			
+			}else {
+				sql = "UPDATE historico "  + 
+						"SET historico.quantidadeDoProduto = historico.quantidadeDoProduto + (select sum(quantidadeDoProduto) from carrinho)," + 
+						"historico.valorTotal = historico.valorTotal + (select sum(valorTotal) from carrinho) where nomeDoCliente = ?;";
+								
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setString(1, cliente);
+				resultSet.previous();
+			}
 			preparedStatement.execute();
-			
+
 			listarItensNoCarrinho();
 			System.out.println("Cliente: " + cliente);
 			
