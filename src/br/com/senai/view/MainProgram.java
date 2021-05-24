@@ -8,7 +8,6 @@ import br.com.senai.controller.carrinho.AdicionaItemNoCarrinho;
 import br.com.senai.controller.carrinho.DevolveItemDoCarrinho;
 import br.com.senai.controller.carrinho.ListaCarrinho;
 import br.com.senai.controller.cliente.AdicionaCliente;
-import br.com.senai.controller.cliente.MostraHistorico;
 import br.com.senai.controller.produto.CadastraProduto;
 import br.com.senai.controller.produto.DeletaProduto;
 import br.com.senai.controller.produto.EditaProduto;
@@ -31,7 +30,6 @@ public class MainProgram {
 		DeletaProduto deletaProduto = new DeletaProduto();
 		AdicionaCliente adicionaCliente = new AdicionaCliente();
 		DevolveItemDoCarrinho devolveItem = new DevolveItemDoCarrinho();
-		MostraHistorico mostraHistorico = new MostraHistorico();
 		
 		boolean sair = false;
 		listaCarrinho.resetar();
@@ -41,9 +39,6 @@ public class MainProgram {
 			int opc = produtoController.opcao();
 
 			switch (opc) {
-			case 0:
-				mostraHistorico.mostrarHistorico();
-				break;
 			case 1:
 				produtos.add(cadastraProduto.cadastrarProduto());
 				break;
@@ -70,6 +65,9 @@ public class MainProgram {
 				break;
 			case 9:
 				sair = true;
+				break;
+			case 10:
+				listaCarrinho.resetar();
 				break;
 
 			default:

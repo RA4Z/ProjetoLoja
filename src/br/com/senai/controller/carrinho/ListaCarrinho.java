@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import br.com.dao.DataBaseConnection;
+import br.com.senai.controller.cliente.MostraHistorico;
 
 public class ListaCarrinho {	
 
@@ -45,6 +46,7 @@ public class ListaCarrinho {
 	@SuppressWarnings("all")
 	public ResultSet gerarCupom(String cliente) {
 		PreparedStatement preparedStatement;		
+		MostraHistorico mostra = new MostraHistorico();
 		try {
 			String sql = "select * from carrinho order by idDoProduto";
 
@@ -78,7 +80,7 @@ public class ListaCarrinho {
 			preparedStatement.execute();
 
 			listarItensNoCarrinho();
-			System.out.println("Cliente: " + cliente);
+			mostra.mostrarHistorico(0, cliente);
 			
 			sql = "DELETE FROM carrinho;";
 			preparedStatement = connection.prepareStatement(sql);
