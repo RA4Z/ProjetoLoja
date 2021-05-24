@@ -34,6 +34,7 @@ public class MainProgram {
 		MostraHistorico mostraHistorico = new MostraHistorico();
 		
 		boolean sair = false;
+		listaCarrinho.resetar();
 		String cliente = adicionaCliente.definirCliente();
 		do {
 			produtoController.menu();

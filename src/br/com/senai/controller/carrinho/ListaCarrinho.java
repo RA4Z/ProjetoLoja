@@ -91,6 +91,18 @@ public class ListaCarrinho {
 			return null;
 		}
 	}
-	
-	
+	public ResultSet resetar() {
+		PreparedStatement preparedStatement;		
+
+		try {
+			String sql = "DELETE FROM carrinho;";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.execute();		
+			return null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
 }
